@@ -13,7 +13,7 @@ typedef struct
     k4a_plugin_t plugin;
     dynlib_t handle;
     k4a_register_plugin_fn registerFn;
-    volatile bool loaded;
+    volatile bool loaded = false;
 } deloader_global_context_t;
 
 static void deloader_init_once(deloader_global_context_t *global);
@@ -255,6 +255,10 @@ void deloader_transform_engine_destroy(k4a_transform_engine_context_t **context)
 
 void deloader_deinit(void)
 {
+    if (!_deloader_global_context_t_private.loaded) {
+        return;
+    }
+    
     deloader_global_context_t *global = deloader_global_context_t_get();
 
     if (global->handle)
